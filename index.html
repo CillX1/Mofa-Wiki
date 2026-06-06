@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mofa Wiki</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f4f4f4;
+}
+
+header {
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 24px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.info {
+  margin-top: 20px;
+  padding: 15px;
+  background: #eee;
+  border-radius: 10px;
+  min-height: 200px;
+}
+
+footer {
+  text-align: center;
+  background: #111;
+  color: white;
+  padding: 15px;
+  margin-top: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>Mofa Wiki Datenbank</header>
+
+<div class="container">
+
+<label>Marke wählen</label>
+<select id="brandSelect" onchange="loadModels()">
+  <option value="">-- auswählen --</option>
+  <option value="puch">Puch</option>
+  <option value="sachs">Sachs</option>
+  <option value="pony">Pony</option>
+  <option value="tomos">Tomos</option>
+</select>
+
+<label>Modell wählen</label>
+<select id="modelSelect" onchange="showInfo()">
+  <option value="">-- auswählen --</option>
+</select>
+
+<div class="info" id="infoBox">Bitte Marke und Modell wählen</div>
+
+</div>
+
+<footer>Engineered by Cillian Fontannaz</footer>
+
+<script>
+
+const data = {
+
+/* ---------------- PUCH ---------------- */
+puch: {
+"Maxi S": {year:1975,engine:"50cc 2T",speed:"30–50 km/h",info:"Legendäres Schweizer Mofa, extrem verbreitet.",tuning:"Sehr beliebt zum Tuning",weight:"45kg",type:"Moped"},
+"Maxi N": {year:1976,engine:"50cc 2T",speed:"30–45 km/h",info:"Robuste Alltagsversion.",tuning:"Einfach zu modifizieren",weight:"44kg",type:"Moped"},
+"X30 Sport": {year:1980,engine:"50cc 2T",speed:"45–65 km/h",info:"Sportliche Variante.",tuning:"Sehr beliebt",weight:"43kg",type:"Sport"},
+"MV50": {year:1978,engine:"50cc 2T",speed:"40–60 km/h",info:"Leichtes Sportmofa.",tuning:"Sehr gut tuningfähig",weight:"42kg",type:"Sport"},
+"Cobra": {year:1982,engine:"50cc 2T",speed:"50–70 km/h",info:"Sportliches Moped.",tuning:"Sehr stark im Tuning",weight:"48kg",type:"Sport"},
+"Monza": {year:1984,engine:"50cc 2T",speed:"55–80 km/h",info:"High Performance Puch.",tuning:"Rennsport beliebt",weight:"47kg",type:"Racing"},
+"Dakota": {year:1979,engine:"50cc 2T",speed:"40–60 km/h",info:"Seltenes Modell.",tuning:"mittel",weight:"46kg",type:"Classic"},
+"Ranger": {year:1981,engine:"50cc 2T",speed:"35–55 km/h",info:"Geländemofa.",tuning:"Offroad Mods",weight:"50kg",type:"Offroad"},
+"City": {year:1977,engine:"50cc 2T",speed:"30–40 km/h",info:"Stadtmofa.",tuning:"wenig",weight:"43kg",type:"City"},
+"Velux": {year:1976,engine:"50cc 2T",speed:"30–45 km/h",info:"Komfortmodell.",tuning:"wenig",weight:"44kg",type:"Comfort"},
+"Magnum": {year:1983,engine:"50cc 2T",speed:"60–85 km/h",info:"Sehr starkes Mofa.",tuning:"extrem beliebt",weight:"49kg",type:"Racing"},
+"X50": {year:1985,engine:"50cc 2T",speed:"50–75 km/h",info:"Weiterentwicklung X-Serie.",tuning:"hoch",weight:"45kg",type:"Sport"},
+"Supermaxi": {year:1986,engine:"50cc 2T",speed:"35–55 km/h",info:"Verbesserte Maxi Version.",tuning:"mittel",weight:"46kg",type:"Moped"},
+"VS50": {year:1980,engine:"50cc 2T",speed:"45–65 km/h",info:"Sehr zuverlässig.",tuning:"gut",weight:"44kg",type:"Classic"},
+"Cobra GT": {year:1987,engine:"50cc 2T",speed:"60–90 km/h",info:"Top Sportversion.",tuning:"extrem",weight:"48kg",type:"Racing"}
+},
+
+/* ---------------- SACHS ---------------- */
+sachs: {
+"Pony 503": {year:1975,engine:"50cc 2T",speed:"30–45 km/h",info:"Klassisches Schweizer Mofa.",tuning:"mittel",weight:"46kg",type:"Moped"},
+"Pony 504": {year:1977,engine:"50cc 2T",speed:"35–50 km/h",info:"Verbesserte Version.",tuning:"mittel",weight:"47kg",type:"Moped"},
+"Prima 5": {year:1980,engine:"50cc 2T",speed:"30–50 km/h",info:"Schaltmofa sehr beliebt.",tuning:"hoch",weight:"45kg",type:"Gear"},
+"Prima 6": {year:1982,engine:"50cc 2T",speed:"35–55 km/h",info:"Weiterentwicklung.",tuning:"hoch",weight:"45kg",type:"Gear"},
+"Madass 50": {year:2004,engine:"50cc 4T",speed:"45–70 km/h",info:"Modernes Design.",tuning:"mittel",weight:"55kg",type:"Modern"},
+"Hercules": {year:1978,engine:"50cc 2T",speed:"40–60 km/h",info:"Sehr robust.",tuning:"hoch",weight:"48kg",type:"Classic"},
+"Lotus": {year:1976,engine:"50cc 2T",speed:"30–45 km/h",info:"Seltenes Modell.",tuning:"mittel",weight:"44kg",type:"Classic"},
+"Eagle": {year:1983,engine:"50cc 2T",speed:"45–65 km/h",info:"Sportlich.",tuning:"hoch",weight:"46kg",type:"Sport"},
+"Speed": {year:1985,engine:"50cc 2T",speed:"50–70 km/h",info:"Sehr schnell.",tuning:"hoch",weight:"45kg",type:"Sport"},
+"Roadster": {year:1986,engine:"50cc 2T",speed:"45–65 km/h",info:"Retro Style.",tuning:"mittel",weight:"47kg",type:"Retro"},
+"Flash": {year:1981,engine:"50cc 2T",speed:"40–60 km/h",info:"Sport Version.",tuning:"hoch",weight:"45kg",type:"Sport"},
+"Racer": {year:1987,engine:"50cc 2T",speed:"55–75 km/h",info:"Tuning beliebt.",tuning:"extrem",weight:"44kg",type:"Racing"},
+"Classic 50": {year:1979,engine:"50cc 2T",speed:"30–50 km/h",info:"Einfach & stabil.",tuning:"mittel",weight:"46kg",type:"Classic"},
+"Urban": {year:1990,engine:"50cc 2T",speed:"35–55 km/h",info:"Stadtmodell.",tuning:"mittel",weight:"45kg",type:"City"},
+"Turbo": {year:1988,engine:"50cc 2T",speed:"60–80 km/h",info:"Sehr stark.",tuning:"hoch",weight:"47kg",type:"Sport"}
+},
+
+/* ---------------- PONY ---------------- */
+pony: {
+"GTX": {year:1980,engine:"50cc 2T",speed:"30–45 km/h",info:"Einfach & zuverlässig.",tuning:"mittel",weight:"44kg",type:"Moped"},
+"Cross": {year:1982,engine:"50cc 2T",speed:"35–55 km/h",info:"Offroad Version.",tuning:"hoch",weight:"48kg",type:"Offroad"},
+"Classic": {year:1978,engine:"50cc 2T",speed:"30–40 km/h",info:"Sehr verbreitet.",tuning:"mittel",weight:"45kg",type:"Classic"},
+"Sport": {year:1985,engine:"50cc 2T",speed:"45–65 km/h",info:"Sportlich.",tuning:"hoch",weight:"44kg",type:"Sport"},
+"City": {year:1977,engine:"50cc 2T",speed:"30–40 km/h",info:"Stadtmofa.",tuning:"wenig",weight:"43kg",type:"City"},
+"Racer": {year:1986,engine:"50cc 2T",speed:"55–75 km/h",info:"Tuning beliebt.",tuning:"extrem",weight:"45kg",type:"Racing"},
+"X1": {year:1983,engine:"50cc 2T",speed:"35–55 km/h",info:"Modernes Modell.",tuning:"mittel",weight:"44kg",type:"Modern"},
+"Turbo": {year:1988,engine:"50cc 2T",speed:"50–70 km/h",info:"Starker Motor.",tuning:"hoch",weight:"46kg",type:"Sport"},
+"Road": {year:1981,engine:"50cc 2T",speed:"30–50 km/h",info:"Allrounder.",tuning:"mittel",weight:"45kg",type:"Classic"},
+"Evo": {year:1990,engine:"50cc 2T",speed:"45–65 km/h",info:"Neue Generation.",tuning:"hoch",weight:"44kg",type:"Modern"},
+"Street": {year:1984,engine:"50cc 2T",speed:"35–55 km/h",info:"City Bike.",tuning:"mittel",weight:"43kg",type:"City"},
+"Xtreme": {year:1989,engine:"50cc 2T",speed:"60–80 km/h",info:"Sehr schnell.",tuning:"extrem",weight:"46kg",type:"Racing"},
+"Pro": {year:1987,engine:"50cc 2T",speed:"50–70 km/h",info:"Pro Version.",tuning:"hoch",weight:"45kg",type:"Sport"},
+"Max": {year:1982,engine:"50cc 2T",speed:"40–60 km/h",info:"Standard Modell.",tuning:"mittel",weight:"44kg",type:"Classic"},
+"Power": {year:1985,engine:"50cc 2T",speed:"55–75 km/h",info:"Sehr stark.",tuning:"hoch",weight:"46kg",type:"Sport"}
+},
+
+/* ---------------- TOMOS ---------------- */
+tomos: {
+"A3": {year:1975,engine:"50cc 2T",speed:"30–45 km/h",info:"Sehr einfach zu reparieren.",tuning:"mittel",weight:"45kg",type:"Classic"},
+"A35": {year:1980,engine:"50cc 2T",speed:"35–55 km/h",info:"Verbesserte Version.",tuning:"hoch",weight:"46kg",type:"Classic"},
+"Flexer": {year:1988,engine:"50cc 2T",speed:"40–60 km/h",info:"Komfortabel.",tuning:"mittel",weight:"47kg",type:"City"},
+"Quadro": {year:1982,engine:"50cc 2T",speed:"40–60 km/h",info:"Sehr robust.",tuning:"hoch",weight:"48kg",type:"Classic"},
+"Sprint": {year:1985,engine:"50cc 2T",speed:"50–70 km/h",info:"Sportlich.",tuning:"hoch",weight:"46kg",type:"Sport"},
+"Classic": {year:1977,engine:"50cc 2T",speed:"30–45 km/h",info:"Retro Modell.",tuning:"mittel",weight:"44kg",type:"Retro"},
+"Streetmate": {year:1990,engine:"50cc 2T",speed:"40–60 km/h",info:"Stadtmofa.",tuning:"mittel",weight:"45kg",type:"City"},
+"Nitro": {year:1992,engine:"50cc 2T",speed:"60–80 km/h",info:"Sehr schnell.",tuning:"extrem",weight:"46kg",type:"Racing"},
+"Revival": {year:1995,engine:"50cc 2T",speed:"40–65 km/h",info:"Modern Retro Mix.",tuning:"hoch",weight:"47kg",type:"Modern"},
+"Enduro": {year:1989,engine:"50cc 2T",speed:"50–70 km/h",info:"Offroad geeignet.",tuning:"hoch",weight:"49kg",type:"Offroad"},
+"Power": {year:1987,engine:"50cc 2T",speed:"55–75 km/h",info:"Starker Motor.",tuning:"hoch",weight:"46kg",type:"Sport"},
+"Racer": {year:1991,engine:"50cc 2T",speed:"60–85 km/h",info:"Rennversion.",tuning:"extrem",weight:"45kg",type:"Racing"},
+"Urban": {year:1986,engine:"50cc 2T",speed:"35–55 km/h",info:"Stadtfreundlich.",tuning:"mittel",weight:"44kg",type:"City"},
+"X-Force": {year:1993,engine:"50cc 2T",speed:"60–80 km/h",info:"Sehr starkes Modell.",tuning:"extrem",weight:"48kg",type:"Racing"},
+"Storm": {year:1996,engine:"50cc 2T",speed:"50–70 km/h",info:"Letzte Generation.",tuning:"hoch",weight:"47kg",type:"Sport"}
+}
+
+};
+
+function loadModels() {
+  const brand = document.getElementById("brandSelect").value;
+  const modelSelect = document.getElementById("modelSelect");
+
+  modelSelect.innerHTML = '<option>-- auswählen --</option>';
+
+  if (!brand) return;
+
+  for (let m in data[brand]) {
+    let opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    modelSelect.appendChild(opt);
+  }
+}
+
+function showInfo() {
+  const brand = document.getElementById("brandSelect").value;
+  const model = document.getElementById("modelSelect").value;
+
+  if (!brand || !model) return;
+
+  const m = data[brand][model];
+
+  document.getElementById("infoBox").innerHTML = `
+    <h2>${model}</h2>
+    <p><b>Baujahr:</b> ${m.year}</p>
+    <p><b>Motor:</b> ${m.engine}</p>
+    <p><b>Geschwindigkeit:</b> ${m.speed}</p>
+    <p><b>Typ:</b> ${m.type}</p>
+    <p><b>Tuning:</b> ${m.tuning}</p>
+    <p>${m.info}</p>
+  `;
+}
+
+</script>
+
+</body>
+</html>
